@@ -4,8 +4,7 @@ package exercise;
 public class App {
     public static void printSquare(Circle circle) {
         try {
-            double getSquare = circle.getSquare();
-            int square = (int)Math.round(getSquare);
+            int square = (int)Math.round(circle.getSquare());
             System.out.println(square);
         } catch (NegativeRadiusException e) {
             System.out.println(e.getMessage());
