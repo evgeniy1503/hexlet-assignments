@@ -2,16 +2,16 @@ package exercise;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.List;
 
 // BEGIN
 class App {
 
     public static boolean scrabble(String symbol, String word) {
-        word = word.toLowerCase();
-        String[] wordSymbol = word.split("");
-        String[] symbols = symbol.split("");
-        ArrayList<String> listWordSymbol = new ArrayList<>(Arrays.asList(wordSymbol));
-        ArrayList<String> listSymbol = new ArrayList<>(Arrays.asList(symbols));
+
+        String lowerWord = word.toLowerCase();
+        ArrayList<String> listWordSymbol = new ArrayList<>(List.of(lowerWord.split("")));
+        ArrayList<String> listSymbol = new ArrayList<>(List.of(symbol.split("")));
 
         for (String s : listSymbol) {
             listWordSymbol.remove(s);

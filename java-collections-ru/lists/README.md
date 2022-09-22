@@ -11,8 +11,8 @@
 При проверке учитывается количество символов, нужных для составления слова и не учитывается их регистр (заглавные и строчные символы считаются одинаковыми).
 
 ```java
-//App.scrabble("rkqodlw", "world"); // true
-//App.scrabble("ajv", "java"); // false
-//App.scrabble("avjafff", "JaVa"); // true
-//App.scrabble("", "hexlet"); // false
+App.scrabble("rkqodlw", "world"); // true
+App.scrabble("ajv", "java"); // false
+App.scrabble("avjafff", "JaVa"); // true
+App.scrabble("", "hexlet"); // false
 ```
