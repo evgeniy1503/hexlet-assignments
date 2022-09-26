@@ -3,17 +3,23 @@ package exercise;
 import java.util.Map;
 
 // BEGIN
-public class SingleTag extends Tag {
+public class PairedTag extends Tag {
 
-    public SingleTag(String tagName, Map<String, String> attribute) {
+    private String bodyTag;
+    private List<Tag> singleTags;
+
+    public PairedTag(String tagName, Map<String, String> attribute, String bodyTag, List<Tag> singleTags) {
         super(tagName, attribute);
+        this.bodyTag = bodyTag;
+        this.singleTags = singleTags;
 
     }
-
-    @Override
     public String toString() {
-       return super.toString();
-    }
+        StringBuilder result = new StringBuilder(super.stringifyAttributes());
 
+        String singleTag = this.singleTags.stream().map(Tag::toString).collect(Collectors.joining());
+
+        return String.format("<%s%s>%s%s</%s>",tagName, stringifyAttributes(), singleTag, bodyTag, tagName);
+    }
 }
 // END

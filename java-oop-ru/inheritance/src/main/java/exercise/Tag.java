@@ -1,5 +1,6 @@
 package exercise;
 
+import java.util.stream.Collectors;
 import java.util.Map;
 
 // BEGIN
@@ -12,11 +13,10 @@ public abstract class Tag {
         this.tagName = tagName;
         this.attributes = attribute;
     }
-    public String toString() {
+    public String stringifyAttributes() {
         StringBuilder result = new StringBuilder();
 
-        result.append("<")
-                .append(this.tagName);
+
         for (Map.Entry<String, String> attribute : attributes.entrySet()) {
             result.append(" ")
                     .append(attribute.getKey())
@@ -24,7 +24,6 @@ public abstract class Tag {
                     .append(attribute.getValue())
                     .append("\"");
         }
-        result.append(">");
         return result.toString();
     }
 }
