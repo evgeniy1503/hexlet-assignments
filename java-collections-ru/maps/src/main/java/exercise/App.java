@@ -7,17 +7,17 @@ import java.util.Map;
 class App {
     public static Map<String, Integer> getWordCount(String sentence) {
 
+        Map<String, Integer> wordsCount = new HashMap<>();
         String[] words = sentence.split(" ");
-        Map<String, Integer> wordCount = new HashMap<>();
 
         if (sentence.length() == 0) {
-            return wordCount;
+            return wordsCount;
         }
         for (String word : words) {
-            int count = (int) wordCount.getOrDefault(word, 0);
-            wordCount.put(word,count + 1);
+            int count = (int) wordsCount.getOrDefault(word, 0);
+            wordsCount.put(word, count + 1);
         }
-        return wordCount;
+        return wordsCount;
     }
 
     public static String toString(Map<String, Integer> wordCount) {
@@ -31,6 +31,5 @@ class App {
         result = "{" + result + "\n}";
         return result;
     }
-
 }
 //END
