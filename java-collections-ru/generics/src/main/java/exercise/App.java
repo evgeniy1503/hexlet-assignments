@@ -11,9 +11,9 @@ class App {
         List<Map> result = new ArrayList<>(books);
         for (Map<String, String> book : books) {
             for (Map.Entry<String, String> param : where.entrySet()) {
-               if (!book.containsValue(param.getValue())) {
-                   result.remove(book);
-               }
+                if (!book.containsValue(param.getValue())) {
+                    result.remove(book);
+                }
             }
         }
         return result;
