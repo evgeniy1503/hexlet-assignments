@@ -1,7 +1,6 @@
 plugins {
   id 'java'
   id 'com.adarshr.test-logger' version '2.1.1'
-  id 'checkstyle'
 }
 
 repositories {
@@ -24,25 +23,4 @@ testlogger {
 
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
-}
-checkstyle {
-  toolVersion '8.41'
-}
-
-task checkExercises (type: Checkstyle) {
-  def exercise = project.hasProperty('exercise') ? project.exercise : ''
-  source 'exercises/' + exercise
-  include '**/*.java'
-  exclude '**/build/**'
-  classpath = files()
-}
-
-tasks.register('testCurrent') {
-  def exercise = project.exercise
-
-  if (exercise == 'start') {
-    return
-  }
-
-  dependsOn gradle.includedBuild(exercise).task(':test')
 }
