@@ -1,7 +1,5 @@
 package exercise.servlet;
 
-import exercise.Data;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -22,27 +20,33 @@ public class CompaniesServlet extends HttpServlet {
                 throws IOException, ServletException {
 
         // BEGIN
-        PrintWriter pw = response.getWriter();
+        PrintWriter out = response.getWriter();
+
         List<String> resultSearch;
-        String paramSearch = request.getParameter("search");
+
+        String paramSearch = request.getParameter("search") == null ? "" : request.getParameter("search");
         String queryString = request.getQueryString();
-        if (paramSearch == null || paramSearch.equals("") || queryString == null) {
+
+        if (paramSearch.equals("") || queryString == null) {
             resultSearch = new ArrayList<>(getCompanies());
-            for (String company: resultSearch) {
-                pw.write(company + "\n");
+            for (String company : resultSearch) {
+                out.println(company);
             }
-        } else {
-            resultSearch = getCompanies().stream()
-                    .filter(x -> x.contains(paramSearch)).collect(Collectors.toList());
-            if (resultSearch.isEmpty()) {
-                pw.write("Companies not found");
-            }
-            for (String company: resultSearch) {
-                pw.write(company + "\n");
-            }
+            return;
         }
 
-        pw.close();
+        resultSearch = getCompanies().stream()
+                    .filter(x -> x.contains(paramSearch))
+                    .collect(Collectors.toList());
+
+        if (resultSearch.isEmpty()) {
+            out.println("Companies not found");
+            return;
+        }
+
+        for (String company: resultSearch) {
+            out.println(company);
+        }
         // END
     }
 }
