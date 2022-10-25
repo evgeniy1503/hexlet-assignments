@@ -223,7 +223,7 @@ public class UsersServlet extends HttpServlet {
         if(!email.isEmpty()) {
             user.put("email", email);
         }
-        response.sendRedirect("/show.jsp");
+        response.sendRedirect("/users/show?id=" + id);
         // END
     }
 
