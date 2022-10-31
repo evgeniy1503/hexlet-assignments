@@ -78,13 +78,7 @@ public class ArticlesServlet extends HttpServlet {
 
         try {
             PreparedStatement statement = connection.prepareStatement(query);
-            if (numberPage == 1) {
-                statement.setInt(1,   0);
-            } else if (numberPage == 2) {
-                statement.setInt(1, 10);
-            } else {
-                statement.setInt(1, numberPage * 10);
-            }
+            statement.setInt(1,   (numberPage - 1) * 10);
             ResultSet result = statement.executeQuery();
             while (result.next()) {
                 articles.add(Map.of("id", result.getString("id"), "title", result.getString("title"),
