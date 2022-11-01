@@ -74,11 +74,12 @@ public class ArticlesServlet extends HttpServlet {
             numberPage = Integer.parseInt(page);
         }
 
-        String query = "SELECT id, title, body FROM articles ORDER BY id LIMIT 10 OFFSET ?";
+        String query = "SELECT id, title, body FROM articles ORDER BY id LIMIT ? OFFSET ?";
 
         try {
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1,   (numberPage - 1) * 10);
+            statement.setInt(1, 10);
+            statement.setInt(2,   (numberPage - 1) * 10);
             ResultSet result = statement.executeQuery();
             while (result.next()) {
                 articles.add(Map.of("id", result.getString("id"), "title", result.getString("title"),
@@ -108,19 +109,21 @@ public class ArticlesServlet extends HttpServlet {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, Integer.parseInt(id));
             ResultSet result = statement.executeQuery();
-            while (result.next()) {
-                article.put("title", result.getString("title"));
-                article.put("body", result.getString("body"));
+
+            if (!result.first()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
-            System.out.println(article);
+
+
+            article.put("title", result.getString("title"));
+            article.put("body", result.getString("body"));
+
+
         } catch (SQLException e) {
-            System.out.println("ERROR!!!");
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-        if (article.size() == 0) {
-            response.sendError(404);
 
-        }
         request.setAttribute("article", article);
         // END
         TemplateEngineUtil.render("articles/show.html", request, response);
