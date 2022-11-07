@@ -113,7 +113,10 @@ class AppTest {
         User user = DB.find(User.class).where().eq("lastName", lastName)
                 .findOne();
         assertThat(user).isNull();
-        assertThat(response.getBody()).contains(lastName);
+        String body = response.getBody();
+        assertThat(body).contains(lastName);
+        assertThat(body).contains(email);
+        assertThat(body).contains("Имя не должно быть пустым");
     }
     // END
 }
