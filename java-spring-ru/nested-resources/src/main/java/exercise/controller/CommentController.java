@@ -49,19 +49,15 @@ public class CommentController {
     }
 
     @PatchMapping(path = "/{postId}/comments/{commentId}")
-    public Comment upDateComment(@RequestBody Comment comment,
+    public Comment upDateComment(@RequestBody Comment commentRequest,
                                            @PathVariable long postId,
                                            @PathVariable long commentId) {
 
-        if (!commentRepository.existsById(commentId)) {
-            throw new ResourceNotFoundException("Comment not found");
-        }
-
-        comment.setId(commentId);
-        comment.setPost(postRepository.findById(postId).get());
-        commentRepository.save(comment);
-        return commentRepository.findByIdAndPostId(commentId, postId)
+        Comment comment = commentRepository.findByIdAndPostId(commentId, postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
+
+        comment.setContent(commentRequest.getContent());
+        return commentRepository.save(comment);
     }
 
     @DeleteMapping(path = "/{postId}/comments/{commentId}")
@@ -70,7 +66,7 @@ public class CommentController {
         Comment comment = commentRepository.findByIdAndPostId(commentId, postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
 
-        commentRepository.deleteById(commentId);
+        commentRepository.delete(comment);
     }
 
     // END
