@@ -29,16 +29,26 @@ public class WeatherService {
     }
 
     // BEGIN
-    public Map<String, String> getWeatherInCity(City city) {
-        Map<String, String> result = new HashMap<>();
+    public Map<String, String> getWeatherInCity(long id) {
+
+        City city = cityRepository.findById(id)
+                .orElseThrow(() -> new CityNotFoundException("City not found"));
+
+        String cityName = city.getName();
+        String url = "http://weather/api/v2/cities/" + cityName;
+
         ObjectMapper mapper = new ObjectMapper();
 
-        String response = client.get("http://weather/api/v2/cities/" + city.getName());
+        String response = client.get(url);
+
+        Map<String, String> result;
+
         try {
             result = mapper.readValue(response, Map.class);
         } catch (Exception e) {
-            return result;
+            throw new RuntimeException(e);
         }
+
         return result;
     }
     // END

@@ -25,26 +25,36 @@ public class CityController {
     private WeatherService weatherService;
 
     // BEGIN
-    @GetMapping("/cities/{id}")
-    public Map<String, String> getCityWeather(@PathVariable Long id) {
-        City city = cityRepository.findById(id)
-                .orElseThrow(() -> new CityNotFoundException("City not found"));
-        return weatherService.getWeatherInCity(city);
-    }
+    @GetMapping(path = "/search")
+    public List<Map<String, String>> getCities(@RequestParam(required = false) String name) {
 
-    @GetMapping("search")
-    public List<Map<String, String>> searchWeather(@RequestParam(defaultValue = "") String name) {
-        List<City> cities = cityRepository.findByNameStartsWithIgnoreCaseOrderByName(name);
-        List<Map<String, String>> result = cities.stream()
-                .map(item -> weatherService.getWeatherInCity(item))
-                .map(item -> {
-                    item.remove("cloudy");
-                    item.remove("wind");
-                    item.remove("humidity");
-                    return item;
+        List<City> filteredCities;
+
+        if (name == null) {
+            filteredCities = cityRepository.findAllByOrderByName();
+        } else {
+            filteredCities = cityRepository.findByNameStartingWithIgnoreCase(name);
+        }
+
+        List<Map<String, String>> citiesWithWeather = filteredCities.stream()
+                .map(city -> {
+                    Map<String, String> weather = weatherService.getWeatherInCity(city.getId());
+                    return Map.of(
+                            "name", city.getName(),
+                            "temperature", weather.get("temperature")
+                    );
                 })
                 .collect(Collectors.toList());
-        return result;
+
+        return citiesWithWeather;
+    }
+
+    @GetMapping(path = "cities/{id}")
+    public Map<String, String> getCity(@PathVariable long id) {
+
+        Map<String, String> weather = weatherService.getWeatherInCity(id);
+
+        return weather;
     }
     // END
 }
