@@ -16,11 +16,6 @@ class App {
         threadMin.start();
         LOGGER.info("Thread " + threadMax.getName() + " started");
         LOGGER.info("Thread " + threadMin.getName() + " started");
-        try {
-            threadMax.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         Map<String, Integer> result = new HashMap<>();
         result.put("max", threadMax.getMax());
         result.put("min", threadMin.getMin());
