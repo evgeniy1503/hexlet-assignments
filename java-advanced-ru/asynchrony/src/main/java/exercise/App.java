@@ -2,60 +2,81 @@ package exercise;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
+
 
 class App {
 
-    private static final Logger LOGGER = Logger.getLogger("AppLogger");
+    private static Path getFullPath(String filePath) {
+        return Paths.get(filePath).toAbsolutePath().normalize();
+    }
 
-    // BEGIN
-    public static CompletableFuture<String> unionFiles(String fileOne, String fileTwo, String unionFile) throws ExecutionException, InterruptedException {
+    public static CompletableFuture<String> unionFiles(String source1, String source2, String dest) {
 
+        CompletableFuture<String> content1 = CompletableFuture.supplyAsync(() -> {
+            String content = "";
 
-        CompletableFuture<String> futureFileOne = CompletableFuture.supplyAsync(() -> {
-            Path paths = Paths.get(fileOne);
-            String content = null;
             try {
-                return content = Files.readString(paths);
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                return content;
+                content = Files.readString(getFullPath(source1));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-
+            return content;
         });
 
+        CompletableFuture<String> content2 = CompletableFuture.supplyAsync(() -> {
 
-        CompletableFuture<String> futureFileTwo = CompletableFuture.supplyAsync(() -> {
-            Path paths = Paths.get(fileTwo);
-            String content = null;
+            String content = "";
             try {
-                return content = Files.readString(paths);
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                return content;
+                content = Files.readString(getFullPath(source2));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
+            return content;
         });
 
-        CompletableFuture<String> unionContent = futureFileOne.thenCombine(futureFileTwo, (content1, content2) -> {
-            Path path = Paths.get(unionFile);
+        return content1.thenCombine(content2, (cont1, cont2) -> {
+            String union = cont1 + cont2;
             try {
-                Files.writeString(path, content1);
-                Files.writeString(path, content2, StandardOpenOption.APPEND);
-                return "!!!";
+                Files.writeString(getFullPath(dest), union, StandardOpenOption.CREATE);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return "ok!";
+
+        }).exceptionally(ex -> {
+            System.out.println("Oops! We have an exception - " + ex.getMessage());
+            return "Unknown!";
+        });
+    }
+
+    public static CompletableFuture<Long> getDirectorySize(String path) {
+
+        CompletableFuture<Long> sum = CompletableFuture.supplyAsync(() -> {
+            Long size = 0L;
+            List<Path> paths = null;
+            try {
+                paths = Files.walk(Paths.get(path), 1)
+                        .filter(file -> Files.isRegularFile(file))
+                        .toList();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }).exceptionally(ex -> {
-            System.out.println("NoSuchFileException");
-            return "ERROR";
+            for (Path file : paths) {
+                try {
+                    size = size + Files.size(file);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return size;
         });
-        return unionContent;
+        return sum;
     }
     // END
 
@@ -63,7 +84,7 @@ class App {
         // BEGIN
         unionFiles(
                 "./src/main/resources/file1.txt",
-                "nonExistingFile",
+                "./src/main/resources/file1.txt",
                 "./src/main/resources/result.txt");
         // END
     }

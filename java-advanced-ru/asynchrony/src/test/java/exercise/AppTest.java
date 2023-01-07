@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.nio.file.Files;
+import java.util.concurrent.ExecutionException;
 
 class AppTest {
     private String destPath;
@@ -46,6 +47,10 @@ class AppTest {
     }
 
     // BEGIN
-    
+    @Test
+    void testGetDirectorySize() throws ExecutionException, InterruptedException {
+        CompletableFuture<Long> result = App.getDirectorySize("src/test/resources/dir");
+        assertThat(result.get()).isEqualTo(26);
+    }
     // END
 }
