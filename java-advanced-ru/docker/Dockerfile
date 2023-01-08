@@ -1,9 +1,9 @@
 FROM gradle:7.4.0-jdk17
 
-ARG JAR_FILE=build/libs/*.jar
+WORKDIR /app
 
-COPY ${JAR_FILE} docker.jar
+COPY ./app .
+
+CMD ["gradle", "bootRun"]
 
 EXPOSE 3000
-
-ENTRYPOINT ["java", "-jar", "docker.jar"]
